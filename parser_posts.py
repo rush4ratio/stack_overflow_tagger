@@ -5,17 +5,19 @@ import re
 
 
 def parse_and_remove(filename):
-	doc = iterparse(filename, ('start', ))
+    doc = iterparse(filename, ('start', 'end'))
 
-	# Skip root element
-	next(doc)
-
-	tag = 'row'
-	
-	for event, elem in doc:
-		if event == 'start':
-			if elem.tag == 'row':
-				yield elem.attrib
+    # get the root element
+    event, root = next(doc)
+    
+    tag = 'row'
+    
+    for event, elem in doc:
+        if event == 'end' and elem.tag == 'row':
+            yield elem.attrib
+            # for garbage collection
+            elem.clear()
+            root.clear()
 				
 
 
